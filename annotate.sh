@@ -30,7 +30,7 @@ for component in "$@"; do
 	git clone --depth 10 git@github.com:openshift/${component}.git
 	pushd ${component}
 
-	hub fork
+	hub fork --remote-name contrib
 	git checkout -b enhancement/single-node-annotation
 	for manifest in $(find manifests/*.yaml); do
 		echo "editing $manifest"
@@ -40,7 +40,7 @@ for component in "$@"; do
 
 	git commit -m "MGMT-3105: add single-node annotations to CVO manifests" -m "this matches openshift/enhancements#504 and doesn't change existing behavior"
 	git reset --hard
-	git push `git remote | grep -v origin` enhancement/single-node-annotation
+	git push contrib enhancement/single-node-annotation
 	hub pull-request --no-edit --push
 
 	popd
