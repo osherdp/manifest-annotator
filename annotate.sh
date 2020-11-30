@@ -38,7 +38,12 @@ for component in "$@"; do
 		git diff -U0 -w --no-color | grepdiff -E "single-node-production-edge" --output-matching=hunk | git apply --cached --ignore-whitespace --unidiff-zero -
 	done
 
-	git commit -m "MGMT-3105: add single-node annotations to CVO manifests" -m "this matches openshift/enhancements#504 and doesn't change existing behavior"
+	git commit -m "MGMT-3105: add 'single-node-production-edge' annotations to CVO manifests" -m "this matches openshift/enhancements#504 and doesn't change existing behavior"
+	echo "-----------------------"
+	echo "The applied commit:"
+	echo "-----------------------"
+	git --no-pager show
+	echo "-----------------------"
 	git reset --hard
 	git push contrib enhancement/single-node-annotation
 	hub pull-request --no-edit --push
