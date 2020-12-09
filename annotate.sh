@@ -10,8 +10,6 @@ This PR is separate from the 'single-node-developer' work, which will implement 
 
 For more info, please refer to the enhancement link and participate in the discussion."
 
-echo "${description}"
-
 if [[ ! `hub` ]]; then
 	echo "you need to install hub (e.g. 'sudo dnf install hub')"
 	exit 1
@@ -70,7 +68,11 @@ function cleanup {
 trap cleanup EXIT
 
 for component in "${components[@]}"; do
-	git clone git@github.com:openshift/${component}.git
+	if [[ "$component" != *\/* ]]; then
+		component="openshift/$component"
+	fi
+
+	git clone git@github.com:${component}.git
 	pushd ${component}
 
 	if [[ "$dry_run" == 1 ]]; then
@@ -86,7 +88,7 @@ for component in "${components[@]}"; do
 	hub fork --remote-name contrib
 	git checkout -b enhancement/single-node-annotation
 
-	readarray -d '' manifests < <(find -name "*.yaml" -not -path "./examples/*" -not -path "./vendor/*" -not -path "./bindata/*" -not -path "./assets/*" -print0)
+	readarray -d '' manifests < <(find -name "*.yaml" -not -path "./examples/*" -not -path "./vendor/*" -not -path "./bindata/*" -not -path "./assets/*" -not -path "./hack/*" -not -path "./test/*" -not -path "./templates/*" -print0)
 	if [[ -z "$manifests" ]]; then
 		echo "no manifests have been found"
 		continue
